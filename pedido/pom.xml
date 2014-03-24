@@ -11,6 +11,9 @@
 	<properties>
 		<resteasy.version>3.0.6.Final</resteasy.version>
 		<spring.version>4.0.2.RELEASE</spring.version>
+		<junit.version>4.11</junit.version>
+		<power.mock.version>1.5</power.mock.version>
+		<easy.mock.version>3.1</easy.mock.version>
 	</properties>
  
 	<dependencies>
@@ -41,7 +44,41 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- EasyMock -->
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>${easy.mock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- PowerMock -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-core</artifactId>
+			<version>${power.mock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${power.mock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-easymock</artifactId>
+			<version>${power.mock.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+
 
 	<build>
 		<finalName>pedido</finalName>

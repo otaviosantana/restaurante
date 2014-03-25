@@ -2,7 +2,7 @@
 <script type="text/javascript">
 function enviarPedido() {
 	var xmlHttpRequest = new XMLHttpRequest();
-	xmlHttpRequest.open("post", "http://localhost:8080/pedido/rest/krusty/pedidoMesa");
+	xmlHttpRequest.open("post", "http://localhost:8080/pedido/rest/krusty/pedidoParceiro");
 	xmlHttpRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
 	xmlHttpRequest.onreadystatechange = function() {
 		if (xmlHttpRequest.readyState == 4) {
@@ -16,13 +16,15 @@ function enviarPedido() {
 	var bebida = document.getElementById('bebida').value;
 	var hamburguer = document.getElementById('hamburguer').value;
 	var observacaoHamburguer = document.getElementById('observacao').value;
+	var enderecoEntrega = document.getElementById('enderecoEntrega').value;
 	var requestVar = {
 					  detalhesHamburguer:[{tipoHamburguer:hamburguer,
 										     quantidade:1,
 										     observacao:observacaoHamburguer}],
 					  detalhesBebida:[{tipoBebida:bebida,
 									     quantidade:1}],
-					  numeroMesa:12
+					  endereco:enderecoEntrega,
+					  solicitante:"Loja vendedora"
 					};
 	var data = JSON.stringify(requestVar);
 	xmlHttpRequest.send(data);
@@ -43,9 +45,11 @@ function enviarPedido() {
 			<option value="CERVEJA">Cerveja</option>
 		</select>
 		<br>
-		Observacao:&nbsp;<input type="text" id="observacao"/>
+		Observa&ccedil;&atilde;o:&nbsp;<input type="text" id="observacao"/>
 		<br>
-		<input type="button" id="enviarPedido" value="Pedido Mesa" onclick="enviarPedido();"/>
+		Endere&ccedil;o de Entrega:&nbsp;<input type="text" id="enderecoEntrega"/>
+		<br>
+		<input type="button" id="enviarPedido" value="Pedido Parceiro" onclick="enviarPedido();"/>
 	</div>
 </body>
 </html>

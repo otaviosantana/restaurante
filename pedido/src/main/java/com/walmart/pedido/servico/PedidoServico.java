@@ -50,7 +50,7 @@ public class PedidoServico {
 		PedidoDAO pedidoDAO = getPedidoDAO();
 		Pedido pedido = pedidoDAO.recuperaPedido(numeroPedido);
 		if (pedido == null) {
-			return Response.ok("Não encontramos o seu pedido").build();
+			return Response.ok("Não encontramos o seu pedido " + numeroPedido).build();
 		}
 		return Response.ok(pedido.getStatusPedido().getDescricao()).build();
 	}
@@ -59,31 +59,25 @@ public class PedidoServico {
 	@Path("/listaPedidos")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listarPedidos() {
-		try {
-			PedidoDAO pedidoDAO = getPedidoDAO();
-			Collection<Pedido> pedidos = pedidoDAO.listaTodosPedidos();
-			if (pedidos.isEmpty()) {
-				System.out.println("Teste");
-				return Response.ok("{\"resposta\":\"Não há pedidos a serem preparados\"", MediaType.APPLICATION_JSON).build();
-			}
-			List<String> resultado = getResultado(pedidos);
-			return Response.ok(resultado, MediaType.APPLICATION_JSON).build();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Response.ok("Erro ao chamar o servidor").build();
+		PedidoDAO pedidoDAO = getPedidoDAO();
+		Collection<Pedido> pedidos = pedidoDAO.listaTodosPedidos();
+		if (pedidos.isEmpty()) {
+			System.out.println("Teste");
+			return Response.ok("{\"resposta\":\"Não há pedidos a serem preparados\"", MediaType.APPLICATION_JSON).build();
 		}
+		List<String> resultado = getResultado(pedidos);
+		return Response.ok(resultado, MediaType.APPLICATION_JSON).build();
 	}
 
 	@GET
 	@Path("/atualizarPedido/{numeroPedido}")
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Response atualizarPedido(@PathParam("numeroPedido") Integer numeroPedido) {
 		PedidoDAO pedidoDAO = getPedidoDAO();
 		Pedido pedido = pedidoDAO.atualizarStatusPedido(numeroPedido);
 		if (pedido == null) {
-			return Response.ok("Não encontramos o seu pedido").build();
+			return Response.ok("Não encontramos o seu pedido " + numeroPedido).build();
 		}
-		return Response.ok(pedido.getStatusPedido().getDescricao()).build();
+		return Response.ok("O status do pedido " + numeroPedido + " foi alterado: " + pedido.getStatusPedido().getDescricao()).build();
 	}
 
 	@GET
@@ -92,10 +86,10 @@ public class PedidoServico {
 		PedidoDAO pedidoDAO = getPedidoDAO();
 		Pedido pedido = pedidoDAO.recuperaPedido(numeroPedido);
 		if (pedido == null) {
-			return Response.ok("Não encontramos o seu pedido").build();
+			return Response.ok("Não encontramos o seu pedido " + numeroPedido).build();
 		}
 		DecimalFormat format = new DecimalFormat(".00");
-		String resposta = "O saldo parcial do seu pedido é de: R$ " + format.format(pedido.calculaValorTotal());
+		String resposta = "O saldo parcial do seu pedido " + numeroPedido + " é de: R$ " + format.format(pedido.calculaValorTotal());
 		return Response.ok(resposta).build();
 	}
 
@@ -107,11 +101,9 @@ public class PedidoServico {
 	}
 
 	private Response receberPedido(Pedido pedido) {
-		System.out.println("Recebendo pedido");
 		try {
 			PedidoDAO pedidoDAO = getPedidoDAO();
 			Integer numeroPedido = pedidoDAO.receberPedido(pedido);
-			System.out.println("Numero pedido " + numeroPedido);
 			String resposta = "Pedido efetuado com sucesso. Número do pedido é " + numeroPedido;
 			return Response.ok(resposta).build();
 		} catch (Exception e) {

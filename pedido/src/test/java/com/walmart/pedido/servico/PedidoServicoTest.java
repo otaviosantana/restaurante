@@ -93,7 +93,7 @@ public class PedidoServicoTest {
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
 		Response result = pedidoServico.statusPedido(NUMERO_PEDIDO);
-		Assert.assertEquals("Não encontramos o seu pedido", result.getEntity().toString());
+		Assert.assertEquals("Não encontramos o seu pedido " + NUMERO_PEDIDO, result.getEntity().toString());
 		EasyMock.verify(pedidoDAOMock);
 		EasyMock.verify(contextMock);
 		PowerMock.verify(ClassPathXmlApplicationContext.class);
@@ -154,7 +154,7 @@ public class PedidoServicoTest {
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
 		Response result = pedidoServico.atualizarPedido(NUMERO_PEDIDO);
-		Assert.assertEquals("Não encontramos o seu pedido", result.getEntity().toString());
+		Assert.assertEquals("Não encontramos o seu pedido " + NUMERO_PEDIDO, result.getEntity().toString());
 		EasyMock.verify(pedidoDAOMock);
 		PowerMock.verify(ClassPathXmlApplicationContext.class);
 		EasyMock.verify(contextMock);
@@ -168,7 +168,7 @@ public class PedidoServicoTest {
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
 		Response result = pedidoServico.atualizarPedido(NUMERO_PEDIDO);
-		Assert.assertEquals("Seu pedido já foi entregue", result.getEntity().toString());
+		Assert.assertEquals("O status do pedido " + NUMERO_PEDIDO + " foi alterado: Seu pedido já foi entregue", result.getEntity().toString());
 		EasyMock.verify(pedidoDAOMock);
 		PowerMock.verify(ClassPathXmlApplicationContext.class);
 		EasyMock.verify(contextMock);
@@ -180,7 +180,7 @@ public class PedidoServicoTest {
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
 		Response result = pedidoServico.consultaSaldoPedido(NUMERO_PEDIDO);
-		Assert.assertEquals("Não encontramos o seu pedido", result.getEntity().toString());
+		Assert.assertEquals("Não encontramos o seu pedido " + NUMERO_PEDIDO, result.getEntity().toString());
 		EasyMock.verify(pedidoDAOMock);
 		PowerMock.verify(ClassPathXmlApplicationContext.class);
 		EasyMock.verify(contextMock);
@@ -193,7 +193,7 @@ public class PedidoServicoTest {
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
 		Response result = pedidoServico.consultaSaldoPedido(NUMERO_PEDIDO);
-		Assert.assertEquals("O saldo parcial do seu pedido é de: R$ 120.00", result.getEntity().toString());
+		Assert.assertEquals("O saldo parcial do seu pedido " + NUMERO_PEDIDO + " é de: R$ 120.00", result.getEntity().toString());
 		EasyMock.verify(pedidoDAOMock);
 		PowerMock.verify(ClassPathXmlApplicationContext.class);
 		EasyMock.verify(contextMock);

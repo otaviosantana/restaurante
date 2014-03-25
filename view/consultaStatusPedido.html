@@ -1,0 +1,30 @@
+<html>
+<script type="text/javascript">
+function consultaStatusPedido() {
+	var xmlHttpRequest = new XMLHttpRequest();
+	var numeroPedido = document.getElementById('numeroPedido').value;
+	if (isNaN(numeroPedido) || numeroPedido == '') {
+		alert('Campo deve ser preenchido apenas com numeros');
+		return;
+	}
+	xmlHttpRequest.open("get",
+			"http://localhost:8080/pedido/rest/krusty/statusPedido/" + numeroPedido, true);	
+	xmlHttpRequest.onreadystatechange = function() {
+		if (xmlHttpRequest.readyState == 4) {
+			if (xmlHttpRequest.status == 200 || xmlHttpRequest.status == 204) {
+				document.getElementById('pedidos').innerHTML = xmlHttpRequest.responseText;
+			} else {
+				alert(xmlHttpRequest.status);
+			}
+		}
+	}
+	xmlHttpRequest.send("numeroPedido="+numeroPedido);
+}
+</script>
+<body>
+	<div id="pedidos">
+		N&uacute;mero do Pedido<input type="text" id="numeroPedido">
+		<input type="button" value="Consultar status do pedido" onclick="consultaStatusPedido();"/>
+	</div>
+</body>
+</html>

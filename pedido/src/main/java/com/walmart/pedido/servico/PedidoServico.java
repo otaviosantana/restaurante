@@ -1,7 +1,10 @@
 package com.walmart.pedido.servico;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,6 +15,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -53,9 +59,19 @@ public class PedidoServico {
 	@Path("/listaPedidos")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listarPedidos() {
-		PedidoDAO pedidoDAO = getPedidoDAO();
-		Collection<Pedido> pedidos = pedidoDAO.listaTodosPedidos();
-		return Response.ok(pedidos, MediaType.APPLICATION_JSON).build();
+		try {
+			PedidoDAO pedidoDAO = getPedidoDAO();
+			Collection<Pedido> pedidos = pedidoDAO.listaTodosPedidos();
+			if (pedidos.isEmpty()) {
+				System.out.println("Teste");
+				return Response.ok("{\"resposta\":\"Não há pedidos a serem preparados\"", MediaType.APPLICATION_JSON).build();
+			}
+			List<String> resultado = getResultado(pedidos);
+			return Response.ok(resultado, MediaType.APPLICATION_JSON).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.ok("Erro ao chamar o servidor").build();
+		}
 	}
 
 	@GET
@@ -91,13 +107,31 @@ public class PedidoServico {
 	}
 
 	private Response receberPedido(Pedido pedido) {
+		System.out.println("Recebendo pedido");
 		try {
 			PedidoDAO pedidoDAO = getPedidoDAO();
 			Integer numeroPedido = pedidoDAO.receberPedido(pedido);
+			System.out.println("Numero pedido " + numeroPedido);
 			String resposta = "Pedido efetuado com sucesso. Número do pedido é " + numeroPedido;
 			return Response.ok(resposta).build();
 		} catch (Exception e) {
 			return Response.ok("Houve um erro ao efetuar o seu pedido, tente novamente.").build();
 		}
+	}
+
+	private List<String> getResultado(Collection<Pedido> pedidos) {
+		List<String> resultado = new ArrayList<>();
+		for (Pedido pedido : pedidos) {
+			try {
+				resultado.add(new ObjectMapper().writeValueAsString(pedido));
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return resultado;
 	}
 }

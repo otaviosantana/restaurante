@@ -11,6 +11,7 @@
 	<properties>
 		<resteasy.version>3.0.6.Final</resteasy.version>
 		<spring.version>4.0.2.RELEASE</spring.version>
+		<cors.filter.version>1.9.2</cors.filter.version>
 		<junit.version>4.11</junit.version>
 		<power.mock.version>1.5</power.mock.version>
 		<easy.mock.version>3.1</easy.mock.version>
@@ -43,6 +44,13 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
+		</dependency>
+		<!-- cors-filter -->
+		<dependency>
+			<groupId>com.thetransactioncompany</groupId>
+			<artifactId>cors-filter</artifactId>
+			<version>${cors.filter.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<!-- JUnit -->
 		<dependency>

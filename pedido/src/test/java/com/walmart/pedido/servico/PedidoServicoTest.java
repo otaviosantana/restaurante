@@ -33,6 +33,7 @@ import com.walmart.pedido.modelo.TipoHamburguer;
 })
 public class PedidoServicoTest {
 
+	private static final int NUMERO_MESA = 5;
 	private static final String PEDIDO_EFETUADO_SUCESSO = "Pedido efetuado com sucesso. Número do pedido é 10";
 	private static final String ERRO_RECEBER_PEDIDO = "Houve um erro ao efetuar o seu pedido, tente novamente.";
 	private static final String BEANS_XML = "beans.xml";
@@ -112,15 +113,39 @@ public class PedidoServicoTest {
 	}
 
 	@Test
-	public void testListarPedidos() throws Exception {
+	public void testListarPedidosVazio() throws Exception {
 		PedidoDAO pedidoDAOMock = createPedidoDAOMockListarTodos(new ArrayList<Pedido>());
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
 		Response result = pedidoServico.listarPedidos();
-		Assert.assertEquals("[]", result.getEntity().toString());
+		Assert.assertEquals("{\"resposta\":\"Não há pedidos a serem preparados\"", result.getEntity().toString());
 		EasyMock.verify(contextMock);
 		PowerMock.verify(ClassPathXmlApplicationContext.class);
 		EasyMock.verify(pedidoDAOMock);
+	}
+
+	@Test
+	public void testListarPedidos() throws Exception {
+		Pedido pedidoMesa = getPedidoMesa();
+		Pedido pedidoParceiro = getPedidoParceiro();
+		Collection<Pedido> pedidos = getPedidos(pedidoMesa, pedidoParceiro);
+		PedidoDAO pedidoDAOMock = createPedidoDAOMockListarTodos(pedidos);
+		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
+		PedidoServico pedidoServico = new PedidoServico();
+		Response result = pedidoServico.listarPedidos();
+		String esperado = "[{\"numeroPedido\":" + pedidoMesa.getNumeroPedido() + ",\"detalhesHamburguer\":[{\"tipoHamburguer\":\"CHEESE_BURGUER\",\"quantidade\":1,\"observacao\":\"observacao\",\"totalPedidoHamburguer\":12.0},{\"tipoHamburguer\":\"CHEESE_SALADA\",\"quantidade\":2,\"observacao\":\"observacao\",\"totalPedidoHamburguer\":30.0},{\"tipoHamburguer\":\"SIMPLES\",\"quantidade\":3,\"observacao\":\"observacao\",\"totalPedidoHamburguer\":30.0}],\"detalhesBebida\":[{\"tipoBebida\":\"AGUA\",\"quantidade\":1,\"precoBebida\":3.0},{\"tipoBebida\":\"CERVEJA\",\"quantidade\":2,\"precoBebida\":10.0},{\"tipoBebida\":\"REFRIGERANTE_2L\",\"quantidade\":3,\"precoBebida\":21.0},{\"tipoBebida\":\"REFRIGERANTE_LATA\",\"quantidade\":4,\"precoBebida\":14.0}],\"statusPedido\":\"PENDENTE\",\"numeroMesa\":5}, {\"numeroPedido\":" + pedidoParceiro.getNumeroPedido() + ",\"detalhesHamburguer\":[{\"tipoHamburguer\":\"CHEESE_BURGUER\",\"quantidade\":1,\"observacao\":\"observacao\",\"totalPedidoHamburguer\":12.0},{\"tipoHamburguer\":\"CHEESE_SALADA\",\"quantidade\":2,\"observacao\":\"observacao\",\"totalPedidoHamburguer\":30.0},{\"tipoHamburguer\":\"SIMPLES\",\"quantidade\":3,\"observacao\":\"observacao\",\"totalPedidoHamburguer\":30.0}],\"detalhesBebida\":[{\"tipoBebida\":\"AGUA\",\"quantidade\":1,\"precoBebida\":3.0},{\"tipoBebida\":\"CERVEJA\",\"quantidade\":2,\"precoBebida\":10.0},{\"tipoBebida\":\"REFRIGERANTE_2L\",\"quantidade\":3,\"precoBebida\":21.0},{\"tipoBebida\":\"REFRIGERANTE_LATA\",\"quantidade\":4,\"precoBebida\":14.0}],\"statusPedido\":\"PENDENTE\",\"endereco\":\"Rua do Endereco\",\"solicitante\":\"Solicitante\"}]";
+		Assert.assertEquals(esperado, result.getEntity().toString());
+		EasyMock.verify(contextMock);
+		PowerMock.verify(ClassPathXmlApplicationContext.class);
+		EasyMock.verify(pedidoDAOMock);
+	}
+
+	private Collection<Pedido> getPedidos(Pedido pedidoMesa,
+			Pedido pedidoParceiro) {
+		Collection<Pedido> pedidos = new ArrayList<Pedido>();
+		pedidos.add(pedidoMesa);
+		pedidos.add(pedidoParceiro);
+		return pedidos;
 	}
 
 	@Test
@@ -163,7 +188,7 @@ public class PedidoServicoTest {
 
 	@Test
 	public void testConsultaSaldoPedido() throws Exception {
-		Pedido pedido = getPedido();
+		Pedido pedido = getPedidoMesa();
 		PedidoDAO pedidoDAOMock = createPedidoDAOMockParaRecuperar(pedido);
 		ClassPathXmlApplicationContext contextMock = createClassPathXmlApplicationContextMock(pedidoDAOMock);
 		PedidoServico pedidoServico = new PedidoServico();
@@ -174,10 +199,20 @@ public class PedidoServicoTest {
 		EasyMock.verify(contextMock);
 	}
 
-	private Pedido getPedido() {
-		Pedido pedido = new PedidoMesa();
+	private Pedido getPedidoMesa() {
+		PedidoMesa pedido = new PedidoMesa();
 		pedido.setDetalhesHamburguer(getDetalhesHamburguer());
 		pedido.setDetalhesBebida(getDetalhesBebida());
+		pedido.setNumeroMesa(NUMERO_MESA);
+		return pedido;
+	}
+
+	private Pedido getPedidoParceiro() {
+		PedidoParceiro pedido = new PedidoParceiro();
+		pedido.setDetalhesHamburguer(getDetalhesHamburguer());
+		pedido.setDetalhesBebida(getDetalhesBebida());
+		pedido.setEndereco("Rua do Endereco");
+		pedido.setSolicitante("Solicitante");
 		return pedido;
 	}
 
@@ -205,11 +240,11 @@ public class PedidoServicoTest {
 		return detalhes;
 	}
 
-	private DetalheHamburguer getDetalheHamburguer(int quantidade,
-			TipoHamburguer tipo) {
+	private DetalheHamburguer getDetalheHamburguer(int quantidade, TipoHamburguer tipo) {
 		DetalheHamburguer detalhe = new DetalheHamburguer();
 		detalhe.setQuantidade(quantidade);
 		detalhe.setTipoHamburguer(tipo);
+		detalhe.setObservacao("observacao");
 		return detalhe;
 	}
 

@@ -1,0 +1,24 @@
+<html>
+<script type="text/javascript">
+function listaPedidos() {
+	var xmlHttpRequest = new XMLHttpRequest();
+	xmlHttpRequest.open("get",
+			"http://localhost:8080/pedido/rest/krusty/listaPedidos", true);	
+	xmlHttpRequest.onreadystatechange = function() {
+		if (xmlHttpRequest.readyState == 4) {
+			if (xmlHttpRequest.status == 200 || xmlHttpRequest.status == 204) {
+				alert('Chamada efetuada com sucesso');
+			} else {
+				alert(xmlHttpRequest.status);
+			}
+		}
+	}
+	xmlHttpRequest.send();
+}
+</script>
+<body>
+	<div id="pedidos">
+		<input type="button" value="Listar Pedidos" onclick="listaPedidos();"/>
+	</div>
+</body>
+</html>

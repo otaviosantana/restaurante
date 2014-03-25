@@ -1,0 +1,52 @@
+<html>
+<script type="text/javascript">
+function enviarPedido() {
+	var xmlHttpRequest = new XMLHttpRequest();
+	xmlHttpRequest.open("post", "http://localhost:8080/pedido/rest/krusty/pedidoMesa");
+	xmlHttpRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
+	xmlHttpRequest.onreadystatechange = function() {
+		if (xmlHttpRequest.readyState == 4) {
+			if (xmlHttpRequest.status == 200 || xmlHttpRequest.status == 204) {
+				alert(xmlHttpRequest.responseText);
+				document.getElementById('pedido').innerHTML = xmlHttpRequest.responseText;
+			} else {
+				alert(xmlHttpRequest.responseText);
+			}
+		}
+	}
+	var bebida = document.getElementById('bebida').value;
+	var hamburguer = document.getElementById('hamburguer').value;
+	var observacaoHamburguer = document.getElementById('observacao').value;
+	var requestVar = {
+					  detalhesHamburguer:[{tipoHamburguer:hamburguer,
+										     quantidade:1,
+										     observacao:observacaoHamburguer}],
+					  detalhesBebida:[{tipoBebida:bebida,
+									     quantidade:1}],
+					  numeroMesa:12
+					};
+	var data = JSON.stringify(requestVar);
+	xmlHttpRequest.send(data);
+}
+</script>
+<body>
+	<div id="pedido">
+		<select id="hamburguer">
+			<option value="SIMPLES">Simples</option>
+			<option value="CHEESE_BURGUER">X-Burguer</option>
+			<option value="CHEESE_SALADA">X-Salada</option>
+		</select>
+		<br>
+		<select id="bebida">
+			<option value="AGUA">Agua</option>
+			<option value="REFRIGERANTE_LATA">Refrigerante lata</option>
+			<option value="REFRIGERANTE_2L">Refrigerante 2l</option>
+			<option value="CERVEJA">Cerveja</option>
+		</select>
+		<br>
+		Observacao:&nbsp;<input type="text" id="observacao"/>
+		<br>
+		<input type="button" id="enviarPedido" value="Pedido Mesa" onclick="enviarPedido();"/>
+	</div>
+</body>
+</html>
